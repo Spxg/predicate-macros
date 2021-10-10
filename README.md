@@ -1,5 +1,5 @@
-# Filter-macros
-Easy to implement [filter](https://github.com/Spxg/filter) traits.
+# predicate-macros
+Easy to implement [predicate](https://github.com/Spxg/predicate) traits.
 
 ## Macros
 * add_fields
@@ -50,9 +50,9 @@ impl std::ops::BitOr for NumType {
 }
 
 impl OpUnitTrait for NumType {
-    fn op_unit(&self) -> OpUnit<Self> {
+    fn get_op_unit(&self) -> OpUnit<Self> {
         match self {
-            NumType::Unit(unit) => *unit.to_owned(),
+            NumType::Unit(unit) => *unit.clone(),
             ty => OpUnit::new(Some(ty.clone()), None, Operation::Single),
         }
     }
