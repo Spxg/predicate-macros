@@ -49,9 +49,9 @@ pub fn impl_op_unit_trait(input: TokenStream) -> TokenStream {
 
     quote!(
         impl OpUnitTrait for #item_name {
-            fn op_unit(&self) -> OpUnit<Self> {
+            fn get_op_unit(&self) -> OpUnit<Self> {
                 match self {
-                    #item_name::Unit(unit) => *unit.to_owned(),
+                    #item_name::Unit(unit) => *unit.clone(),
                     ty => OpUnit::new(Some(ty.clone()), None, Operation::Single),
                 }
             }
