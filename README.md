@@ -1,6 +1,9 @@
 # predicate-macros
 Easy to implement [predicate](https://github.com/Spxg/predicate) traits.
 
+## Attention
+You need implement Clone trait by yourself.
+
 ## Macros
 * add_fields
 * BitAnd
