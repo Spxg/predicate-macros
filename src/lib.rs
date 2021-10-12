@@ -30,7 +30,6 @@ pub fn add_fields(_attr: TokenStream, input: TokenStream) -> TokenStream {
 
     let tokens: proc_macro2::TokenStream = item.into_token_stream();
     quote!(
-        #[derive(Clone)]
         #tokens
 
         impl std::default::Default for #item_name {
