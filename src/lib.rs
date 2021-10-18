@@ -12,7 +12,7 @@ pub fn add_fields(_attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut item = parse_macro_input!(input as DeriveInput);
     let item_name = item.ident.clone();
 
-    let unit_field = format!("Unit(Box<OpUnit<{}>>)", item_name);
+    let unit_field = format!("Unit(OpUnitRcType<OpUnit<{}>>)", item_name);
     let unit_field: TokenStream = unit_field.parse().expect("parse error");
     let unknown_field: TokenStream = "Unknown".parse().expect("parse error");
     let unit = parse_macro_input!(unit_field as Variant);
@@ -48,10 +48,10 @@ pub fn impl_op_unit_trait(input: TokenStream) -> TokenStream {
 
     quote!(
         impl OpUnitTrait for #item_name {
-            fn get_op_unit(&self) -> OpUnit<Self> {
-                match self {
-                    #item_name::Unit(unit) => *unit.clone(),
-                    ty => OpUnit::new(Some(ty.clone()), None, Operation::Single),
+            fn get_op_unit(self: &OpUnitRcType<Self>) -> OpUnitRcType<OpUnit<Self>> {
+                match self.as_ref() {
+                    #item_name::Unit(unit) => unit.clone(),
+                    _ => OpUnitRcType::new(OpUnit::new(Some(self.clone()), None, Operation::Single)),
                 }
             }
         }
@@ -67,10 +67,14 @@ pub fn impl_bit_and(input: TokenStream) -> TokenStream {
     quote!(
         impl std::ops::BitAnd for #item_name {
             type Output = Self;
-
+        
             fn bitand(self, rhs: Self) -> Self::Output {
-                let node = OpUnit::new(Some(self), Some(rhs), Operation::And);
-                #item_name::Unit(Box::new(node))
+                let node = OpUnit::new(
+                    Some(OpUnitRcType::new(self)),
+                    Some(OpUnitRcType::new(rhs)),
+                    Operation::And,
+                );
+                #item_name::Unit(OpUnitRcType::new(node))
             }
         }
     )
@@ -85,10 +89,14 @@ pub fn impl_bit_or(input: TokenStream) -> TokenStream {
     quote!(
         impl std::ops::BitOr for #item_name {
             type Output = Self;
-
+        
             fn bitor(self, rhs: Self) -> Self::Output {
-                let node = OpUnit::new(Some(self), Some(rhs), Operation::Or);
-                #item_name::Unit(Box::new(node))
+                let node = OpUnit::new(
+                    Some(OpUnitRcType::new(self)),
+                    Some(OpUnitRcType::new(rhs)),
+                    Operation::Or,
+                );
+                #item_name::Unit(OpUnitRcType::new(node))
             }
         }
     )
