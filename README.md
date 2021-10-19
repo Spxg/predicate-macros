@@ -2,14 +2,14 @@
 Easy to implement [predicate](https://github.com/Spxg/predicate) traits.
 
 ## Macros
-* add_fields
+* add_field
 * BitAnd
 * BitOr
 * OpUnitTrait
 
 ## Example
 ```rust
-#[add_fields]
+#[add_field]
 #[derive(BitAnd, BitOr, OpUnitTrait)]
 enum NumType {
     Odd,
@@ -31,13 +31,6 @@ enum NumType {
     DivByFive,
     IsMagicNum(i32),
     Unit(OpUnitInnerType<OpUnit<NumType>>),
-    Unknown,
-}
-
-impl std::default::Default for NumType {
-    fn default() -> Self {
-        Self::Unknown
-    }
 }
 
 impl std::ops::BitAnd for NumType {

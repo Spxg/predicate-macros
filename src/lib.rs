@@ -8,22 +8,19 @@ use syn::DeriveInput;
 use syn::Variant;
 
 #[proc_macro_attribute]
-pub fn add_fields(_attr: TokenStream, input: TokenStream) -> TokenStream {
+pub fn add_field(_attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut item = parse_macro_input!(input as DeriveInput);
     let item_name = item.ident.clone();
 
     let unit_field = format!("Unit(OpUnitRcType<OpUnit<{}>>)", item_name);
     let unit_field: TokenStream = unit_field.parse().expect("parse error");
-    let unknown_field: TokenStream = "Unknown".parse().expect("parse error");
     let unit = parse_macro_input!(unit_field as Variant);
-    let unknown = parse_macro_input!(unknown_field as Variant);
 
     match item.data {
         Data::Enum(DataEnum {
             ref mut variants, ..
         }) => {
             variants.push(unit);
-            variants.push(unknown);
         }
         _ => panic!("only impl for enum"),
     }
@@ -31,12 +28,6 @@ pub fn add_fields(_attr: TokenStream, input: TokenStream) -> TokenStream {
     let tokens: proc_macro2::TokenStream = item.into_token_stream();
     quote!(
         #tokens
-
-        impl std::default::Default for #item_name {
-            fn default() -> Self {
-                Self::Unknown
-            }
-        }
     )
     .into()
 }
@@ -67,7 +58,7 @@ pub fn impl_bit_and(input: TokenStream) -> TokenStream {
     quote!(
         impl std::ops::BitAnd for #item_name {
             type Output = Self;
-        
+
             fn bitand(self, rhs: Self) -> Self::Output {
                 let node = OpUnit::new(
                     Some(OpUnitRcType::new(self)),
@@ -89,7 +80,7 @@ pub fn impl_bit_or(input: TokenStream) -> TokenStream {
     quote!(
         impl std::ops::BitOr for #item_name {
             type Output = Self;
-        
+
             fn bitor(self, rhs: Self) -> Self::Output {
                 let node = OpUnit::new(
                     Some(OpUnitRcType::new(self)),
