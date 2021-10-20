@@ -32,7 +32,7 @@ enum NumType {
     DivByFour,
     DivByFive,
     IsMagicNum(i32),
-    Unit(OpUnitInnerType<OpUnit<NumType>>),
+    Unit(OpUnitRcType<OpUnit<NumType>>),
 }
 
 impl std::ops::BitAnd for NumType {
@@ -40,11 +40,11 @@ impl std::ops::BitAnd for NumType {
 
     fn bitand(self, rhs: Self) -> Self::Output {
         let node = OpUnit::new(
-            Some(OpUnitInnerType::new(self)),
-            Some(OpUnitInnerType::new(rhs)),
+            Some(OpUnitRcType::new(self)),
+            Some(OpUnitRcType::new(rhs)),
             Operation::And,
         );
-        NumType::Unit(OpUnitInnerType::new(node))
+        NumType::Unit(OpUnitRcType::new(node))
     }
 }
 
@@ -53,19 +53,19 @@ impl std::ops::BitOr for NumType {
 
     fn bitor(self, rhs: Self) -> Self::Output {
         let node = OpUnit::new(
-            Some(OpUnitInnerType::new(self)),
-            Some(OpUnitInnerType::new(rhs)),
+            Some(OpUnitRcType::new(self)),
+            Some(OpUnitRcType::new(rhs)),
             Operation::Or,
         );
-        NumType::Unit(OpUnitInnerType::new(node))
+        NumType::Unit(OpUnitRcType::new(node))
     }
 }
 
 impl OpUnitTrait for NumType {
-    fn get_op_unit(self: &OpUnitInnerType<Self>) -> OpUnitInnerType<OpUnit<Self>> {
+    fn get_op_unit(self: &OpUnitRcType<Self>) -> OpUnitRcType<OpUnit<Self>> {
         match self.as_ref() {
             NumType::Unit(unit) => unit.clone(),
-            _ => OpUnitInnerType::new(OpUnit::new(Some(self.clone()), None, Operation::Single)),
+            _ => OpUnitRcType::new(OpUnit::new(Some(self.clone()), None, Operation::Single)),
         }
     }
 }
