@@ -1,4 +1,6 @@
 # predicate-macros
+[![crates.io version](https://img.shields.io/crates/v/predicate-macros.svg)](https://crates.io/crates/predicate-macros)
+
 Easy to implement [predicate](https://github.com/Spxg/predicate) traits.
 
 ## Macros
